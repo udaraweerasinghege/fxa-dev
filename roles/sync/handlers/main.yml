@@ -3,8 +3,26 @@
 - name: build syncserver virtualenv
   sudo: true
   sudo_user: app
-  command: make -C /data/syncserver build
+  command: make -C /data/syncserver clean build
 
 - name: restart syncserver process
   sudo: true
   supervisorctl: name=syncserver state=restarted
+
+- name: install synclogtailer dependencies
+  sudo: true
+  sudo_user: app
+  npm: path=/data/synclogtailer
+
+- name: restart synclogtailer
+  sudo: true
+  supervisorctl: name=synclogtailer state=restarted
+
+- name: install syncmetrics dependencies
+  sudo: true
+  sudo_user: app
+  npm: path=/data/syncmetrics
+
+- name: restart syncmetrics
+  sudo: true
+  supervisorctl: name=syncmetrics state=restarted

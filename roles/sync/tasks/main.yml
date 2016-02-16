@@ -51,6 +51,12 @@
     - build syncserver virtualenv
     - restart syncserver process
 
+- name: temp reload
+  command: "true"
+  notify:
+    - build syncserver virtualenv
+    - restart syncserver process
+
 - name: supervise syncserver
   sudo: true
   copy: src=syncserver.conf dest=/etc/supervisor.d/syncserver.conf
@@ -61,5 +67,45 @@
   sudo_user: app
   template: src=syncserver.ini.j2 dest=/data/syncserver/syncserver.dev.ini
   notify: restart syncserver process
+
+- name: install synclogtailer
+  sudo: true
+  sudo_user: app
+  git: repo=https://github.com/dannycoates/synclogtailer.git
+       dest=/data/synclogtailer
+       force=true
+  notify:
+    - install synclogtailer dependencies
+    - restart synclogtailer
+
+- name: supervise synclogtailer
+  sudo: true
+  copy: src=synclogtailer.conf dest=/etc/supervisor.d/synclogtailer.conf
+  notify: update supervisor
+
+- name: install syncmetrics
+  sudo: true
+  sudo_user: app
+  git: repo=https://github.com/dannycoates/syncmetrics.git
+       dest=/data/syncmetrics
+       force=true
+  notify:
+    - install syncmetrics dependencies
+    - restart syncmetrics
+
+- name: configure syncmetrics
+  sudo: true
+  sudo_user: app
+  template: src=syncmetrics.json.j2 dest=/data/syncmetrics/config.json
+  notify: restart syncmetrics
+
+- name: supervise syncmetrics
+  sudo: true
+  copy: src=syncmetrics.conf dest=/etc/supervisor.d/syncmetrics.conf
+  notify: update supervisor
+
+- name: install psql client tools
+  sudo: true
+  yum: name=postgresql94 state=present
 
 - meta: flush_handlers

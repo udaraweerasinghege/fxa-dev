@@ -167,6 +167,32 @@
       }
     },
 
+    "FxaOperationPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName":"FxaOperationPolicy",
+        "PolicyDocument":{
+          "Version":"2012-10-17",
+          "Statement":[
+            {
+              "Effect":"Allow",
+              "Action":[ "cloudwatch:PutMetricData" ],
+              "Resource": "*"
+            },
+            {
+              "Effect":"Allow",
+              "Action": [
+                "firehose:PutRecordBatch",
+                "firehose:PutRecord"
+              ],
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": [{ "Ref": "FxaIAMRole" }]
+      }
+    },
+
     "FxaInstanceProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
@@ -441,6 +467,56 @@
       }
     },
 
+    "SyncStatisticsLogS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "ExpirationInDays": "7",
+              "Status": "Enabled"
+            }
+          ]
+        }
+      }
+    },
+
+    "SyncRedshiftClusterSecurityGroup": {
+      "Type":"AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "fxa-dev Firehose-Redshift SG",
+        "SecurityGroupIngress": [ {
+          "CidrIp" : "52.89.255.224/27",
+          "FromPort" : "5439",
+          "ToPort" : "5439",
+          "IpProtocol" : "tcp"
+        },
+        {
+          "IpProtocol": "tcp",
+          "FromPort": "5439",
+          "ToPort": "5439",
+          "SourceSecurityGroupId": {"Fn::GetAtt": ["FxaDevSecurityGroup", "GroupId"]}
+        }]
+      }
+    },
+
+    "SyncRedshiftCluster": {
+      "Type": "AWS::Redshift::Cluster",
+      "Properties": {
+        "ClusterType": "single-node",
+        "VpcSecurityGroupIds" : [
+          {"Fn::GetAtt": ["SyncRedshiftClusterSecurityGroup", "GroupId"]}
+        ],
+        "DBName": "syncstats",
+        "MasterUsername": "root",
+        "MasterUserPassword": { "Ref": "RDSPassword" },
+        "NodeType": "dc1.large",
+        "Port": "5439",
+        "PubliclyAccessible" : "true"
+      }
+    },
+
     "FxaDNS": {
       "Type": "AWS::Route53::RecordSetGroup",
       "DependsOn" : [ "FxaEc2Instance", "FxaELB", "FxaRDSInstance" ],
@@ -522,6 +598,14 @@
     "Redis": {
       "Description": "Fxa Notifications Redis",
       "Value": { "Ref": "FxaNotificationsRedisCluster" }
+    },
+    "SyncBucket": {
+      "Description": "S3 bucket for Sync stats logs",
+      "Value": { "Ref": "SyncStatisticsLogS3Bucket" }
+    },
+    "SyncRedshiftEndpoint": {
+      "Description": "Redshift endpoint",
+      "Value": { "Fn::Join": [":", [{"Fn::GetAtt": ["SyncRedshiftCluster", "Endpoint.Address"]}, {"Fn::GetAtt": ["SyncRedshiftCluster", "Endpoint.Port"]}]]}
     }
   }
 }

@@ -16,6 +16,8 @@
     profile_db_password: "{{ rds_password }}"
     sync_db_host: "{{ rds_host }}"
     sync_db_password: "{{ rds_password }}"
+    sync_bucket: "{{ sync_bucket }}"
+    redshift_host: "{{ redshift_host }}"
   roles:
     - ses
     - memcached

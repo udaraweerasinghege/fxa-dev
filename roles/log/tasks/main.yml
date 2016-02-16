@@ -4,40 +4,80 @@
   sudo: true
   yum: name=java-1.7.0-openjdk state=present
 
-- name: install elasticsearch
+- name: install kinesis firehose agent
   sudo: true
-  yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.noarch.rpm state=present
+  yum: name=aws-kinesis-agent state=present
 
-- name: supervise elasticsearch
+- name: start kinesis agent
   sudo: true
-  copy: src=elasticsearch.conf dest=/etc/supervisor.d/elasticsearch.conf
-  notify: update supervisor
+  service: name=aws-kinesis-agent state=started enabled=true
 
-- name: install grunt
+- name: configure kinesis agent
   sudo: true
-  npm: name=grunt-cli global=yes state=present
+  template: src=kinesis.json.j2 dest=/etc/aws-kinesis/agent.json
+  notify: restart kinesis agent
 
-- name: install kibana
-  sudo: true
-  sudo_user: app
-  git: repo=https://github.com/elasticsearch/kibana.git
-       dest=/data/kibana
-       version=v3.1.1
-       force=true
-  notify:
-    - install kibana dependencies
-    - build kibana
+# - name: install elasticsearch
+#   sudo: true
+#   yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.noarch.rpm state=present
+#
+# - name: supervise elasticsearch
+#   sudo: true
+#   copy: src=elasticsearch.conf dest=/etc/supervisor.d/elasticsearch.conf
+#   notify: update supervisor
+#
+# - name: install grunt
+#   sudo: true
+#   npm: name=grunt-cli global=yes state=present
 
-- meta: flush_handlers
-
-- name: configure kibana
-  sudo: true
-  sudo_user: app
-  template: src=kibana_config.js.j2 dest=/data/kibana/dist/config.js
-
-- name: configure nginx location
-  sudo: true
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/location/kibana.conf
-  notify: reload nginx config
+# - name: install heka
+#   sudo: true
+#   yum: name=https://github.com/mozilla-services/heka/releases/download/v0.10.0/heka-0_10_0-linux-amd64.rpm state=present
+#
+# - file: path=/etc/heka.d state=directory
+#   sudo: true
+#
+# - name: install mozsvc.lua
+#   sudo: true
+#   copy: src=mozsvc.lua dest=/usr/share/heka/lua_modules/mozsvc.lua
+#   notify: restart heka
+#
+# - name: install mozsvc_json.lua
+#   sudo: true
+#   copy: src=mozsvc_json.lua dest=/usr/share/heka/lua_decoders/mozsvc_json.lua
+#   notify: restart heka
+#
+# - name: configure heka
+#   sudo: true
+#   copy: src=hekad.toml dest=/etc/heka.d/!hekad.toml
+#   notify: restart heka
+#
+# - name: supervise heka
+#   sudo: true
+#   copy: src=hekad.conf dest=/etc/supervisor.d/hekad.conf
+#   notify: update supervisor
+#
+# - name: install kibana
+#   sudo: true
+#   sudo_user: app
+#   git: repo=https://github.com/elasticsearch/kibana.git
+#        dest=/data/kibana
+#        version=v3.1.1
+#        force=true
+#   notify:
+#     - install kibana dependencies
+#     - build kibana
+#
+# - meta: flush_handlers
+#
+# - name: configure kibana
+#   sudo: true
+#   sudo_user: app
+#   template: src=kibana_config.js.j2 dest=/data/kibana/dist/config.js
+#
+# - name: configure nginx location
+#   sudo: true
+#   template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/location/kibana.conf
+#   notify: reload nginx config
 
 - meta: flush_handlers

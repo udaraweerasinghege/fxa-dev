@@ -1,0 +1,10 @@
+{
+  "cloudwatch.emitMetrics": true,
+  "firehose.endpoint": "https://firehose.{{ region }}.amazonaws.com",
+  "flows": [
+    {
+      "filePattern": "/var/log/syncstats.log*",
+      "deliveryStream": "dc-fxadev-sync-2"
+    }
+  ]
+}

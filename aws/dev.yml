@@ -64,26 +64,28 @@
     profile_db_password: "{{ rds_password }}"
     sync_db_host: "{{ rds_host }}"
     sync_db_password: "{{ rds_password }}"
+    sync_bucket: "{{ hostvars['localhost']['stack']['stack_outputs']['SyncBucket'] }}"
+    redshift_host: "{{ hostvars['localhost']['stack']['stack_outputs']['SyncRedshiftEndpoint']}}"
   vars_files:
     - "environments/{{ stack_name }}.yml"
   roles:
-    - ses
-    - memcached
-    - datadog
-    - customs
+    # - ses
+    # - memcached
+    # - datadog
+    # - customs
     - auth
     - authdb
-    - content
-    - basket-proxy
-    - oauth
-    - oauth-console
-    - notifications
-    - profile
-    - kv
+    # - content
+    # - basket-proxy
+    # - oauth
+    # - oauth-console
+    # - notifications
+    # - profile
+    # - kv
     - sync
-    - rp
-    - rp-untrusted
-    - able
-    - log
-    - cron_update
-    - team
+    # - rp
+    # - rp-untrusted
+    # - able
+    # - log
+    # - cron_update
+    # - team

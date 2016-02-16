@@ -1,0 +1,24 @@
+---
+region: us-west-2
+subdomain: dc.dev
+hosted_zone: lcip.org
+ssl_certificate_name: exp20170412_wildcard_dev_lcip.org
+rds_password: 3shE2QDw6t8ezq6e
+auth_git_repo: https://github.com/dannycoates/picl-idp.git
+auth_git_version: sessionDevice2
+authdb_git_repo: https://github.com/dannycoates/fxa-auth-db-mysql.git
+authdb_git_version: sessionDevice2
+sync_git_repo: https://github.com/dannycoates/syncserver.git
+sync_git_version: master
+basket_proxy_git_version: v0.56.0
+content_git_version: v0.56.0
+customs_git_version: v0.55.0
+auth_mailer_git_version: ca69b7f26c67b2e302aa4e65c6e4a8c8db2bf268
+oauth_git_version: v0.56.0
+profile_git_version: v0.53.1
+
+cron_time:
+  minute: 0
+  hour: 0
+  month: 1
+  day: 1
