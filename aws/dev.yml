@@ -53,7 +53,6 @@
     basket_queue_url: "{{ hostvars['localhost']['stack']['stack_outputs']['BasketAccountChangeQueueURL'] }}"
     oauth_queue_url: "{{ hostvars['localhost']['stack']['stack_outputs']['OAuthAccountChangeQueueURL'] }}"
     profile_queue_url: "{{ hostvars['localhost']['stack']['stack_outputs']['ProfileAccountChangeQueueURL'] }}"
-    customs_ban_queue_url: "{{ hostvars['localhost']['stack']['stack_outputs']['CustomsBanQueueURL'] }}"
     content_static_resource_url: "https://{{ hostvars['localhost']['stack']['stack_outputs']['StaticResourceHost'] }}"
     authdb_primary_host: "{{ rds_host }}"
     authdb_primary_password: "{{ rds_password }}"
@@ -71,7 +70,6 @@
     - ses
     - memcached
     - datadog
-    - customs
     - auth
     - authdb
     - content

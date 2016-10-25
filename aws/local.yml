@@ -20,7 +20,6 @@
     - ses
     - memcached
     - datadog
-    - customs
     - auth
     - authdb
     - content
