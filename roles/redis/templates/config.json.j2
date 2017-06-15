@@ -1,0 +1,48 @@
+{
+  "db": {
+    "driver": "mysql"
+  },
+  "mysql": {
+    "password": "{{ profile_db_password }}",
+    "host": "{{ profile_db_host }}"
+  },
+  "logging": {
+    "fmt": "pretty",
+    "level": "all"
+  },
+  "publicUrl": "{{ profile_public_url }}",
+  "authServer": {
+    "url": "{{ auth_public_url }}/v1"
+  },
+  "oauth": {
+    "url": "{{ oauth_public_url }}/v1"
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": {{ profile_private_port }}
+  },
+  "img": {
+    "driver": "local",
+    "uploads": {
+      "dest": {
+        "public": "/config/public"
+      }
+    },
+    "providers": {
+      "gravatar": "^http(://www|s://secure)\\.gravatar\\.com/avatar/[0-9a-f]{32}(\\?s=\\d+)?$",
+      "fxa": "^{{ profile_public_url }}/a/[0-9a-f]{32}$"
+    },
+    "compute": {
+      "maxProcesses": 5
+    },
+    "url": "{{ profile_public_url }}/a/{id}"
+  },
+  "events": {
+    "region": "{{ region }}",
+    "queueUrl": "{{ profile_queue_url }}"
+  },
+  "authServerMessaging": {
+    "region": "{{ region }}",
+    "profileUpdatesQueueUrl": "{{ profile_update_queue_url | default('') }}"
+  }
+}
